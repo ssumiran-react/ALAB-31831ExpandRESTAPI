@@ -2,6 +2,7 @@ import express from 'express'
 const router = express.Router();
 
 import posts from '../data/posts.js';
+import comments from '../data/comments.js';
 import error from '../utilities/error.js';
 
 router
@@ -20,8 +21,10 @@ router
 
       //console.log("user  :", post.length);
       res.json({posts: post, links });
-    } else {
+    } else if(posts) {
       res.json({ posts, links });
+    }else{
+      next();
     }
   })
   .post((req, res, next) => {
@@ -84,6 +87,38 @@ router
     else next();
   });
 
+router
+  .route("/:id/comments")
+  .get((req, res, next) => {
+    
+    const links = [
+      {
+        href: `/${req.params.id}/comments`,
+        rel: "",
+        type: "PATCH",
+      },
+      {
+        href: `/${req.params.id}/comments`,
+        rel: "",
+        type: "DELETE",
+      },
+    ];
 
+    const post = posts.find((p) => p.id == req.params.id);
+    let comment = comments.filter((c) => c.postId == post.id);
+
+    if (req.query.userId) {
+      const { userId } = req.query;
+      comment = comments.filter((c) => c.userId == userId);
+    }
+      
+    if (comment) {
+      res.json({ comments:comment, links });
+    }else if (comments) {
+      res.json({ comments, links });
+    }else {
+      next();
+    }
+  });
 
 export default router

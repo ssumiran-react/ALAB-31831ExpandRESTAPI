@@ -89,6 +89,41 @@ router
     let post = posts.filter((p) => p.userId == user.id);
 
     res.json({ post });
-  }
-) 
+  });
+  
+router
+  .route("/:id/comments")
+  .get((req, res, next) => {
+    
+    const links = [
+      {
+        href: `/${req.params.id}/comments`,
+        rel: "",
+        type: "PATCH",
+      },
+      {
+        href: `/${req.params.id}/comments`,
+        rel: "",
+        type: "DELETE",
+      },
+    ];
+
+    const user = users.find((u) => u.id == req.params.id);
+    let comment = comments.filter((c) => c.userId == user.id);
+
+    if (req.query.postId) {
+      const { postId } = req.query;
+      comment = comments.filter((c) => c.postId == postId);
+    }
+
+    if (comment) {
+      res.json({ comments:comment, links });
+
+    }else if (comments) {
+      res.json({ comments, links });
+    
+    }else {
+      next();
+    }
+  });  
 export default router
