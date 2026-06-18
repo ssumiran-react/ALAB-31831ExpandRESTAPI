@@ -18,7 +18,7 @@ router
       const { userId } = req.query;
       const post = posts.filter((p) => p.userId == userId);
 
-      console.log("user  :", post.length);
+      //console.log("user  :", post.length);
       res.json({posts: post, links });
     } else {
       res.json({ posts, links });
