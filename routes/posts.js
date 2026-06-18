@@ -14,8 +14,15 @@ router
         type: "GET",
       },
     ];
+    if (req.query.userId) {
+      const { userId } = req.query;
+      const post = posts.filter((p) => p.userId == userId);
 
-    res.json({ posts, links });
+      console.log("user  :", post.length);
+      res.json({posts: post, links });
+    } else {
+      res.json({ posts, links });
+    }
   })
   .post((req, res, next) => {
     if (req.body.userId && req.body.title && req.body.content) {
@@ -77,14 +84,6 @@ router
     else next();
   });
 
-router
-  .route("/api/posts")
-  .get((req, res, next) => {
-    const post = posts.find((p) => p.id == req.params.id);
 
 
-    res.json({ post, links });
-    
-  })
-  
 export default router
